@@ -1,9 +1,7 @@
 package com.xxl.sso.sample.config;
 
-import com.xxl.sso.core.conf.Conf;
-import com.xxl.sso.core.filter.XxlSsoTokenFilter;
-import com.xxl.sso.core.util.JedisUtil;
-import org.springframework.beans.factory.DisposableBean;
+import com.xxl.sso.client.conf.Conf;
+import com.xxl.sso.client.filter.XxlSsoTokenFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @author xuxueli 2018-11-15
  */
 @Configuration
-public class XxlSsoConfig implements DisposableBean {
-
+public class XxlSsoConfig {
 
     @Value("${xxl.sso.server}")
     private String xxlSsoServer;
@@ -22,8 +19,8 @@ public class XxlSsoConfig implements DisposableBean {
     @Value("${xxl.sso.logout.path}")
     private String xxlSsoLogoutPath;
 
-    @Value("${xxl.sso.redis.address}")
-    private String xxlSsoRedisAddress;
+    @Value("${xxl.sso.logincheck.path}")
+    private String xxlSsoLoginCheckPath;
 
     @Value("${xxl-sso.excluded.paths}")
     private String xxlSsoExcludedPaths;
@@ -31,10 +28,6 @@ public class XxlSsoConfig implements DisposableBean {
 
     @Bean
     public FilterRegistrationBean xxlSsoFilterRegistration() {
-
-        // xxl-sso, redis init
-        JedisUtil.init(xxlSsoRedisAddress);
-
         // xxl-sso, filter init
         FilterRegistrationBean registration = new FilterRegistrationBean();
 
@@ -44,16 +37,9 @@ public class XxlSsoConfig implements DisposableBean {
         registration.setFilter(new XxlSsoTokenFilter());
         registration.addInitParameter(Conf.SSO_SERVER, xxlSsoServer);
         registration.addInitParameter(Conf.SSO_LOGOUT_PATH, xxlSsoLogoutPath);
+        registration.addInitParameter(Conf.SSO_LOGIN_CHECK_PATH, xxlSsoLoginCheckPath);
         registration.addInitParameter(Conf.SSO_EXCLUDED_PATHS, xxlSsoExcludedPaths);
 
         return registration;
     }
-
-    @Override
-    public void destroy() throws Exception {
-
-        // xxl-sso, redis close
-        JedisUtil.close();
-    }
-
 }

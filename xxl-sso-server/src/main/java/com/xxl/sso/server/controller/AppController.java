@@ -26,7 +26,6 @@ public class AppController {
     @Autowired
     private UserService userService;
 
-
     /**
      * Login
      *
@@ -37,11 +36,10 @@ public class AppController {
     @RequestMapping("/login")
     @ResponseBody
     public ReturnT<String> login(String username, String password) {
-
         // valid login
         ReturnT<UserInfo> result = userService.findUser(username, password);
         if (result.getCode() != ReturnT.SUCCESS_CODE) {
-            return new ReturnT<String>(result.getCode(), result.getMsg());
+            return new ReturnT<>(result.getCode(), result.getMsg());
         }
 
         // 1、make xxl-sso user
@@ -51,7 +49,6 @@ public class AppController {
         xxlUser.setVersion(UUID.randomUUID().toString().replaceAll("-", ""));
         xxlUser.setExpireMinute(SsoLoginStore.getRedisExpireMinute());
         xxlUser.setExpireFreshTime(System.currentTimeMillis());
-
 
         // 2、generate sessionId + storeKey
         String sessionId = SsoSessionIdHelper.makeSessionId(xxlUser);
@@ -87,13 +84,14 @@ public class AppController {
     @RequestMapping("/logincheck")
     @ResponseBody
     public ReturnT<XxlSsoUser> logincheck(String sessionId) {
-
         // logout
         XxlSsoUser xxlUser = SsoTokenLoginHelper.loginCheck(sessionId);
         if (xxlUser == null) {
-            return new ReturnT<XxlSsoUser>(ReturnT.FAIL_CODE, "sso not login.");
+            return new ReturnT<>(ReturnT.FAIL_CODE, "sso not login.");
         }
-        return new ReturnT<XxlSsoUser>(xxlUser);
+        // todo
+        // After the expiration time has passed half, Auto refresh
+        return new ReturnT<>(xxlUser);
     }
 
 }

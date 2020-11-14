@@ -25,7 +25,6 @@
 
 
     <dependencies>
-
         <!-- web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,16 +39,8 @@
         <!-- xxl-sso-core -->
         <dependency>
             <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-sso-core</artifactId>
+            <artifactId>xxl-sso-client</artifactId>
             <version>${parent.version}</version>
-        </dependency>
-
-        <!-- httpclient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.12</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
